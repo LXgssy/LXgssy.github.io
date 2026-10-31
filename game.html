@@ -72,7 +72,7 @@
   addEventListener('pb:boot-failed', () => { void recover(); });
   addEventListener('pb:modules-ready', () => { ready = true; document.getElementById('boot-retry')?.remove(); });
   // A stalled download/font/GPU initialization must still leave a usable action, without auto-reloading slow links.
-  setTimeout(() => { if (!ready) showRetry(); }, 45000);
+  setTimeout(() => { if (!ready) showRetry(); }, 300000); /* 首次全量下载需 2-5 分钟 */
 })();
 </script>
 
