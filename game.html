@@ -232,7 +232,8 @@
           if (u.hostname === APU) {
             /* 本地 API 仿真优先 (pb-local-api) */
             if (window.__pbLocalAPI) {
-              try { return window.__pbLocalAPI(u.search.replace(/^\?/, ""), { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" }); } catch (e) {}
+              var __lq = "/pbapi.py?u=" + encodeURIComponent(u.pathname + u.search);
+              try { return window.__pbLocalAPI(__lq.split("?")[1], { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" }); } catch (e) {}
             }
 
             var pth = "/pbapi.py?u=" + encodeURIComponent(u.pathname + u.search);
