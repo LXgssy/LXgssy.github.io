@@ -230,6 +230,11 @@
           var u = new URL(url, location.href);
           /* 官方 API 域名代理 — 全部转同源云函数 */
           if (u.hostname === APU) {
+            /* 本地 API 仿真优先 (pb-local-api) */
+            if (window.__pbLocalAPI) {
+              try { return window.__pbLocalAPI(u.search.replace(/^\?/, ""), { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" }); } catch (e) {}
+            }
+
             var pth = "/pbapi.py?u=" + encodeURIComponent(u.pathname + u.search);
             var io = { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" };
             return _of.call(window, pth, io).then(function (rp) {
@@ -613,7 +618,8 @@
         fetchWL(0);
       })();
 </script>
-  </head>
+  <script src="/pb-local-api.js"></script>
+</head>
   <body>
     <noscript><main style="max-width:640px;margin:40px auto;padding:0 16px;color:#fff;font:16px/1.5 system-ui,sans-serif"><h1>WebOS</h1><p>此应用需要启用 JavaScript 与 WebGL 后刷新页面。</p></main></noscript>
     <canvas id="game"></canvas>
