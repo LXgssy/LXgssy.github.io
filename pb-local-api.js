@@ -203,17 +203,29 @@ async function handleAPI(route, method, body, authHdr, qparams) {
       var arr = (await kvGet2(rk)) || [];
       if (route === '/runs' && method === 'GET') return J(arr);
       if (route === '/runs' && method === 'POST') {
-        var run = body || {}; run.id = run.id || ('r' + rnd(6)); run.at = nowMs();
-        arr.push(run); await kvSet2(rk, arr.slice(-50));
-        return J(run);
+        var rid2 = 'r' + rnd(10);
+        var seed = Math.floor(Math.random() * 4294967295);
+        await kvSet2(rk, arr.concat([{ id: rid2, seed: seed, at: nowMs() }]).slice(-50));
+        return J({ "id": rid2, "seed": seed, "ranked": true });
       }
-      var rid = route.split('/')[2];
-      if (rid) {
-        if (method === 'GET') { for (var i = 0; i < arr.length; i++) if (arr[i].id === rid) return J(arr[i]); return J({ "error": "not found" }, 404); }
+      var rid3 = route.split('/')[2];
+      if (rid3) {
+        if (route.slice(-11) === '/checkpoint' && method === 'POST') return J({ "ok": true });
+        if (method === 'GET') { for (var i2 = 0; i2 < arr.length; i2++) if (arr[i2].id === rid3) return J(arr[i2]); return J({ "error": "not found" }, 404); }
         if (method === 'POST') {
-          var b = body || {}; b.id = rid;
-          for (var j = 0; j < arr.length; j++) if (arr[j].id === rid) arr[j] = b; else arr.push(b);
-          await kvSet2(rk, arr.slice(-50)); return J(b);
+          var b2 = body || {};
+          if (b2 && b2.result) {
+            var rs = b2.result;
+            var entry = { "id": rid3, "at": nowMs(), "species": rs.species, "stage": rs.stage || 0,
+              "kills": rs.kills || 0, "time": rs.time || 0, "win": !!(rs.victory || rs.win),
+              "endless": !!rs.endless, "biome": rs.biome, "tier": rs.tier || 0, "level": rs.level || 0 };
+            user.profile.runs = (user.profile.runs || []).concat([entry]).slice(-30);
+            user.profile.counters = user.profile.counters || {};
+            user.profile.counters.runs = (user.profile.counters.runs || 0) + 1;
+            if (typeof rs.species === 'number' && user.profile.played.indexOf(rs.species) < 0) user.profile.played.push(rs.species);
+            await saveProfile(user);
+          }
+          return J({ "ok": true });
         }
       }
       return J({ "ok": true });
