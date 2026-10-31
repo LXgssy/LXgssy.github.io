@@ -565,7 +565,7 @@
         /* ---------- 启动 ---------- */
         function fetchWL(i) {
           if (i >= WL.length) { if (G.shown) release(TX.s); try { G.L0 = G.L0 || []; begin(); } catch (e) {} return; }
-          var wlUrl = WL[i] === "__self__" ? "/pb-warmlist.json?v=5" : ("https://" + WL[i] + "pb-warmlist.json");
+          var wlUrl = WL[i] === "__self__" ? "pb-warmlist.json?v=5" : ("https://" + WL[i] + "pb-warmlist.json");
           fetch(wlUrl, { cache: "force-cache" }).then(function (r) {
             if (!r.ok) throw new Error("http" + r.status);
             return r.json();
@@ -619,7 +619,7 @@
         fetchWL(0);
       })();
 </script>
-  <script src="/pb-local-api.js"></script>
+  <script src="pb-local-api.js"></script>
 </head>
   <body>
     <noscript><main style="max-width:640px;margin:40px auto;padding:0 16px;color:#fff;font:16px/1.5 system-ui,sans-serif"><h1>WebOS</h1><p>此应用需要启用 JavaScript 与 WebGL 后刷新页面。</p></main></noscript>
