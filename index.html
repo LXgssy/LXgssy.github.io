@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta name="pokebonk-build" content="mvpdimhl" />
+    <meta name="mirror-of" content="https://pokebonk.com/" />
+    <meta name="disclaimer" content="非官方粉丝镜像站, 与 pokebonk.com 无隶属/授权关系; 数据独立存储, 与原站不互通。Unofficial fan-made mirror site; all data is stored independently and is not shared with pokebonk.com." />
+    <script data-pb-recovery="">// Inlined before the module entry by Vite: it must work even when that entry cannot load.
+(() => {
+  const build = document.querySelector('meta[name="pokebonk-build"]')?.content || 'unknown';
+  const texts = {"es":"Reintentar","en":"Retry","pt":"Tentar de novo","fr":"Réessayer","ja":"再試行","zh":"重试","zht":"重試","ko":"다시 시도","ru":"Повторить"};
+  const tag = document.documentElement.lang.toLowerCase();
+  const lang = tag === 'zh-hant' ? 'zht' : tag.split('-')[0];
+  const retryText = texts[lang] || texts.en;
+  let ready = false, recovering = false;
+  const urls = new Set();
+  const remember = (value) => {
+    try {
+      const url = new URL(value, location.href);
+      if (url.origin === location.origin && /\/assets\/.*\.(js|css)(\?.*)?$/.test(url.pathname + url.search)) urls.add(url.href);
+    } catch { /* An error without a resource URL. */ }
+  };
+  const navigate = () => {
+    const url = new URL(location.href);
+    url.searchParams.set('pb-reload', String(Date.now()));
+    location.replace(url.href);
+  };
+  const showRetry = () => {
+    if (document.getElementById('boot-retry')) return;
+    const card = document.createElement('div');
+    card.id = 'boot-retry';
+    card.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:#1a1630;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font:700 24px system-ui;text-align:center';
+    const title = document.createElement('strong'); title.textContent = 'PokéBonk';
+    const btn = document.createElement('button'); btn.textContent = retryText;
+    btn.style.cssText = 'padding:14px 32px;border:0;border-radius:28px;background:#e94756;color:white;font:700 18px system-ui;cursor:pointer';
+    btn.onclick = () => { void refresh().finally(navigate); };
+    card.append(title, btn);
+    (document.body || document.documentElement).append(card);
+  };
+  const refresh = async () => {
+    document.querySelectorAll('script[type="module"][src],link[rel="stylesheet"][href],link[rel="modulepreload"][href]').forEach((el) => remember(el.src || el.href));
+    // cache:reload replaces a bad HTTP cache entry without clearing accounts or pending runs.
+    const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), 8000);
+    try { await Promise.allSettled([...urls].map((url) => fetch(url, { cache: 'reload', signal: ctl.signal }))); }
+    finally { clearTimeout(timer); }
+  };
+  const recover = async () => {
+    if (ready || recovering) return;
+    recovering = true;
+    showRetry();
+    let once = false;
+    try {
+      const key = 'pb.bootRetry.' + build;
+      once = sessionStorage.getItem(key) !== '1';
+      sessionStorage.setItem(key, '1');
+    } catch { /* Storage unavailable: offer the button, do not risk a reload loop. */ }
+    if (once) { try { await refresh(); } finally { navigate(); } }
+  };
+  addEventListener('error', (event) => {
+    const target = event.target;
+    if (target?.tagName === 'SCRIPT' && target.type === 'module' || target?.tagName === 'LINK' && ['stylesheet', 'modulepreload'].includes(target.rel)) {
+      remember(target.src || target.href); void recover();
+    } else if (event.filename) {
+      remember(event.filename);
+      if (urls.size) void recover();
+    }
+  }, true);
+  addEventListener('vite:preloadError', (event) => {
+    if (ready) return;
+    // Let boot.ts catch the rejection; suppressing it would falsely mark a missing module as ready.
+    const message = String(event.payload?.message || '');
+    for (const url of message.match(/https?:\/\/[^\s"'<>]+/g) || []) remember(url);
+    void recover();
+  });
+  addEventListener('pokebonk:boot-failed', () => { void recover(); });
+  addEventListener('pokebonk:modules-ready', () => { ready = true; document.getElementById('boot-retry')?.remove(); });
+  // A stalled download/font/GPU initialization must still leave a usable action, without auto-reloading slow links.
+  setTimeout(() => { if (!ready) showRetry(); }, 45000);
+})();
+</script>
+
+    <meta charset="UTF-8" />
+    <!-- On touch screens core/touch.ts rewrites the viewport (landscape phones get a wider virtual one). -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1a1630" />
+    <!-- Light by default (dark is opt-in: Ajustes → Tema, see the script below and ui/theme.ts; meta values flip to «dark» then). «only light» stops the forced dark mode of Chrome Android, vivo, Samsung and QQ from inverting colours (reports 6292, 6173, 7280). -->
+    <meta name="color-scheme" content="only light" />
+    <meta name="supported-color-schemes" content="light" />
+    <meta name="darkreader-lock" />
+    <!-- Theme before the first paint (no white flash): same rule as src/ui/theme.ts. Saved choice, else the system's. -->
+    <script>
+      (function () {
+        try {
+          var p = localStorage.getItem('pokebonk.theme');
+          var d = p === 'dark' || (p !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches);
+          var r = document.documentElement;
+          r.setAttribute('data-theme', d ? 'dark' : 'light');
+          if (d) {
+            document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'dark');
+            document.querySelector('meta[name="supported-color-schemes"]').setAttribute('content', 'dark');
+            document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f1320');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <!-- Title, description, canonical, hreflang, Open Graph, Twitter and JSON-LD come from src/seo.ts (vite.config.ts). -->
+    <title>PokéBonk · Survivor 3D de Pokémon gratis en el navegador</title>
+    <meta name="description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://lxgssy.github.io/pokebonk/" />
+    <link rel="alternate" hreflang="es" href="https://lxgssy.github.io/pokebonk/?lang=es" />
+    <link rel="alternate" hreflang="en" href="https://lxgssy.github.io/pokebonk/?lang=en" />
+    <link rel="alternate" hreflang="pt" href="https://lxgssy.github.io/pokebonk/?lang=pt" />
+    <link rel="alternate" hreflang="fr" href="https://lxgssy.github.io/pokebonk/?lang=fr" />
+    <link rel="alternate" hreflang="ja" href="https://lxgssy.github.io/pokebonk/?lang=ja" />
+    <link rel="alternate" hreflang="zh-CN" href="https://lxgssy.github.io/pokebonk/?lang=zh" />
+    <link rel="alternate" hreflang="zh-TW" href="https://lxgssy.github.io/pokebonk/?lang=zht" />
+    <link rel="alternate" hreflang="ko" href="https://lxgssy.github.io/pokebonk/?lang=ko" />
+    <link rel="alternate" hreflang="ru" href="https://lxgssy.github.io/pokebonk/?lang=ru" />
+    <link rel="alternate" hreflang="x-default" href="https://lxgssy.github.io/pokebonk/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PokéBonk" />
+    <meta property="og:title" content="PokéBonk · Survivor 3D de Pokémon gratis en el navegador" />
+    <meta property="og:description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
+    <meta property="og:url" content="https://lxgssy.github.io/pokebonk/" />
+    <meta property="og:image" content="https://lxgssy.github.io/pokebonk/social/card-es.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PokéBonk: un bosque de mesetas con una Poké Ball en un altar. Survivor 3D gratis en el navegador." />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="pt_BR" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:locale:alternate" content="ja_JP" />
+    <meta property="og:locale:alternate" content="zh_CN" />
+    <meta property="og:locale:alternate" content="zh_TW" />
+    <meta property="og:locale:alternate" content="ko_KR" />
+    <meta property="og:locale:alternate" content="ru_RU" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PokéBonk · Survivor 3D de Pokémon gratis en el navegador" />
+    <meta name="twitter:description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
+    <meta name="twitter:image" content="https://lxgssy.github.io/pokebonk/social/card-es.jpg" />
+    <meta name="twitter:image:alt" content="PokéBonk: un bosque de mesetas con una Poké Ball en un altar. Survivor 3D gratis en el navegador." />
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://lxgssy.github.io/pokebonk/#website","name":"PokéBonk","url":"https://lxgssy.github.io/pokebonk/","isBasedOn":"https://pokebonk.com/","inLanguage":["es","en","pt","fr","ja","zh-CN","zh-TW","ko","ru"]},{"@type":["VideoGame","WebApplication"],"@id":"https://lxgssy.github.io/pokebonk/#game","name":"PokéBonk","url":"https://lxgssy.github.io/pokebonk/","description":"Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial.","image":"https://lxgssy.github.io/pokebonk/social/card-es.jpg","inLanguage":"es","isPartOf":{"@id":"https://lxgssy.github.io/pokebonk/#website"},"genre":["Survivor","Roguelite","Action"],"gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"GameApplication","operatingSystem":"Any (WebGL)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"sameAs":["https://discord.gg/X7KusQqx8X"]}]}</script>
+    <meta name="application-name" content="PokéBonk" />
+    <meta name="apple-mobile-web-app-title" content="PokéBonk" />
+    <link rel="icon" href="./favicon.ico" sizes="48x48" />
+    <link rel="icon" href="./icons/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<script>
+    // PokéBonk 镜像: 页面层媒体加载 hook v1 — SW 被平台 CDN 拦截后的替代媒体管线
+    // (平台 2026-10 变更: Service-Worker 脚本请求被拦, b64 媒体层迁到页面层;
+    //  Cache pb-media-v9 与下载门/SW 通用: 下载门预热 -> hook 命中零网络)
+    (function () {
+      if (window.__PBMediaHook) return;
+      window.__PBMediaHook = true;
+      var MIME = { png: "image/png", ogg: "audio/ogg", glb: "model/gltf-binary", json: "application/json", jpg: "image/jpeg",
+                   jpeg: "image/jpeg", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav",
+                   ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", gz: "application/gzip" };
+      var RE = /\.(png|ogg|glb|jpg|jpeg|webp|mp3|wav|woff2?|ico|gz|json)(\?|#|$)/i;
+      var PBH = ["pokebonk-m10.rth1.xyz/", "pokebonk-m5.rth1.xyz/", "pokebonk-m6.rth1.xyz/", "pokebonk-m7.rth1.xyz/", "pokebonk-m8.rth1.xyz/", "pokebonk-m9.rth1.xyz/"];
+      var PBMDM = {"assets": 5, "assets/cries": 2, "assets/env": 4, "assets/front": 4, "assets/icons": 4, "assets/items": 5, "assets/models": 5, "assets/music": 5, "assets/pmd": 0, "assets/pmd-shiny": 5, "assets/portraits": 3, "assets/portraits-shiny": 0, "assets/ui": 3, "data": 1};
+      function hostIdx(p) {
+        var parts = p.split("/");
+        var d = parts[0] === "assets" && parts.length > 2 ? parts.slice(0, 2).join("/") : parts[0];
+        var m = PBMDM[d];
+        return m === undefined ? 0 : m;
+      }
+      var inflight = {};
+      function loadB64(path) {
+        if (inflight[path]) return inflight[path];
+        inflight[path] = (async function () {
+          var p = path.replace(/^\//, "");
+          var first = hostIdx(p);
+          var order = [];
+          for (var o = 0; o < PBH.length; o++) order.push(PBH[(first + o) % PBH.length]);
+          for (var i = 0; i < order.length; i++) {
+            try {
+              var r = await fetch("https://" + order[i] + p + ".b64.txt", { cache: "force-cache" });
+              if (r.status === 429 || r.status >= 500) { await new Promise(function (x) { setTimeout(x, 500); }); continue; }
+              if (!r.ok) continue;
+              var txt = (await r.text()).replace(/\s+/g, "");
+              var bin = atob(txt);
+              var bytes = new Uint8Array(bin.length);
+              for (var j = 0; j < bin.length; j++) bytes[j] = bin.charCodeAt(j);
+              var ext = p.slice(p.lastIndexOf(".") + 1).toLowerCase();
+              var blob = new Blob([bytes], { type: MIME[ext] || "application/octet-stream" });
+              try {
+                var c = await caches.open("pb-media-v9");
+                await c.put(path, new Response(blob, { headers: { "content-type": blob.type } }));
+              } catch (e) {}
+              delete inflight[path];
+              return blob;
+            } catch (e) {}
+          }
+          delete inflight[path];
+          return null;
+        })();
+        return inflight[path];
+      }
+      async function cacheHit(path) {
+        try {
+          var c = await caches.open("pb-media-v9");
+          return await c.match(path, { ignoreVary: true });
+        } catch (e) { return null; }
+      }
+      /* ---- fetch hook (three.js FileLoader / GLTF / 数据) ---- */
+      var _of = window.fetch;
+      window.fetch = function (input, init) {
+        try {
+          var url = typeof input === "string" ? input : (input && input.url) || "";
+          var u = new URL(url, location.href);
+          if (u.origin === location.origin && RE.test(u.pathname) && !u.pathname.startsWith("/pbapi.py")) {
+            return (async function () {
+              var hit = await cacheHit(u.pathname);
+              if (hit) return hit;
+              var blob = await loadB64(u.pathname);
+              if (blob) return new Response(blob, { status: 200, headers: { "content-type": blob.type } });
+              return _of.call(window, input, init);
+            })();
+          }
+        } catch (e) {}
+        return _of.call(window, input, init);
+      };
+      /* ---- 媒体元素 src: 不拦截正常加载; 404 错误捕获后从 cache/b64 补救 ---- */
+      document.addEventListener("error", function (e) {
+        var el = e.target;
+        if (!el || !el.tagName || el.__pbRetry) return;
+        var tag = el.tagName.toUpperCase();
+        if (tag !== "IMG" && tag !== "AUDIO" && tag !== "VIDEO" && tag !== "SOURCE" && tag !== "TRACK") return;
+        try {
+          var u = new URL(el.src || "", location.href);
+          if (u.origin !== location.origin || !RE.test(u.pathname)) return;
+          el.__pbRetry = true;
+          e.stopPropagation();
+          (async function () {
+            var hit = await cacheHit(u.pathname);
+            var blob = hit ? await hit.blob() : await loadB64(u.pathname);
+            if (blob) {
+              var done = function () { el.removeEventListener("error", el.__pbErr2 || function(){}); };
+              el.addEventListener("load", done, { once: true });
+              el.src = URL.createObjectURL(blob);
+            }
+          })();
+        } catch (err) {}
+      }, true);
+    })();
+    </script>
+    <script type="module">
+      // PokéBonk 镜像: 内联动态 import 入口 (规避托管平台对 <script src> 的 CDN 重写)
+      import("./assets/main-RauCMJ6f-mvpdimhl.js").catch((e) => { console.error("[pokebonk] entry", e); dispatchEvent(new Event("pokebonk:boot-failed")); });
+    </script>
+    <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm-mvpdimhl.js">
+    <link rel="modulepreload" crossorigin href="./assets/i18n-Bjw6RPm7-mvpdimhl.js">
+    <script>
+      // PokéBonk 镜像: Service Worker 运行时缓存 (静态资源 cache-first, HTML network-first)
+      // 2026-10: 平台 CDN 拦截 SW 脚本请求 -> 默认停用 (媒体层由页面 hook 接管); ?pb-sw=1 手动开启
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        try {
+          if (new URLSearchParams(location.search).has('pb-sw')) {
+            // 立即注册(不等load) + 失败重试: 平台偶发抖动不能让 b64 层缺席
+            (function reg(n) {
+              navigator./* v15: SW 层已由页面媒体 hook (pb-media-v10) 全覆盖且线上 pb-sw.js 已 404, 不再注册; 存量 SW 注销 */
+        navigator.serviceWorker.getRegistrations().then(function (rs) { rs.forEach(function (r) { r.unregister(); }); }).catch(function () {}), Promise.resolve().catch(() => {
+                if (n < 6) setTimeout(() => reg(n + 1), 2000 + n * 1500);
+              });
+            })(0);
+          }
+        } catch {}
+      }
+    </script>
+    <script>
+      // PokéBonk 镜像: 资源包下载门 v3.1 — 打开网站立即提示"正在下载资源包",
+      // 进站前把全部游戏资源(模型/精灵图/图标/音频/数据gz)从 b64 层拉取并写入
+      // Cache API('pb-media-v9', 键=pathname, 与 SW v9 一致), 下载完成才放行进入。
+      // 队列按 b64 主机分区, 每主机 1-2 并发(避免单主机被平台限流降级);
+      // 已缓存文件 cache.match 命中即跳过(自愈缓存驱逐); 失败重试 2 轮后转后台。
+      // 稳妥阀: 429 退避+全局冷却 / 4 分钟无进展自动转后台, 永不卡死入口。
+      (function () {
+        if (!(window.caches && window.atob)) return;
+        var T = {
+          zh: { d: "正在下载资源包", f: "下载完成，正在进入游戏…", s: "网络较慢，资源转后台继续下载，现在即可进入游戏", h: "首次访问需一次性下载全部游戏资源（模型/图鉴/图标/音频，约 100 MB），完成后本地缓存，之后秒进游戏", m: "【镜像站声明】本站为非官方粉丝镜像站，并非原站，与原站 pokebonk.com 无任何隶属或授权关系；本站全部数据（账号/存档/排行榜）独立存储，与原站完全不互通", b: "镜像站 · 非原站 · 数据与原站不互通" },
+          zht: { d: "正在下載資源包", f: "下載完成，正在進入遊戲…", s: "網絡較慢，資源轉後台繼續下載，現在即可進入遊戲", h: "首次訪問需一次性下載全部遊戲資源（模型/圖鑑/圖標/音頻，約 100 MB），完成後本地快取，之後秒進遊戲", m: "【鏡像站聲明】本站為非官方粉絲鏡像站，並非原站，與原站 pokebonk.com 無任何隸屬或授權關係；本站全部資料（帳號/存檔/排行榜）獨立儲存，與原站完全不互通", b: "鏡像站 · 非原站 · 資料與原站不互通" },
+          en: { d: "Downloading resource pack", f: "Download complete — entering the game…", s: "Slow network — downloads continue in the background, you can play now", h: "First visit downloads all game assets once (models/dex/icons/audio, ~100 MB), then they are cached locally for instant loads", m: "Mirror notice: This is an unofficial fan-made mirror site, NOT the original website. Not affiliated with or operated by pokebonk.com. All data (accounts/saves/leaderboards) is stored independently and is not shared with the original site", b: "Unofficial mirror · Not the original site · Data not shared" },
+          es: { d: "Descargando el paquete de recursos", f: "Descarga completa — entrando en el juego…", s: "Red lenta — la descarga continúa en segundo plano, ya puedes jugar", h: "La primera visita descarga todos los recursos del juego (modelos/dex/iconos/audio, ~100 MB); luego quedan en caché local", m: "Aviso de réplica: Este es un sitio espejo no oficial hecho por fans, NO es la web original. Sin afiliación con pokebonk.com. Todos los datos (cuentas/partidas/rankings) se guardan de forma independiente y no se comparten con el sitio original", b: "Réplica no oficial · No es el sitio original · Datos no compartidos" },
+          pt: { d: "Baixando o pacote de recursos", f: "Download concluído — entrando no jogo…", s: "Rede lenta — o download continua em segundo plano, você já pode jogar", h: "A primeira visita baixa todos os recursos do jogo (modelos/dex/ícones/áudio, ~100 MB); depois ficam em cache local", m: "Aviso de espelho: Este é um site espelho não oficial feito por fãs, NÃO é o site original. Sem afiliação com pokebonk.com. Todos os dados (contas/progresso/rankings) são armazenados de forma independente e não são compartilhados com o site original", b: "Espelho não oficial · Não é o site original · Dados não compartilhados" },
+          fr: { d: "Téléchargement du pack de ressources", f: "Téléchargement terminé — entrée dans le jeu…", s: "Réseau lent — le téléchargement continue en arrière-plan, vous pouvez jouer", h: "La première visite télécharge toutes les ressources du jeu (modèles/dex/icônes/audio, ~100 Mo), mises en cache localement", m: "Avis miroir : Ceci est un site miroir non officiel créé par des fans, PAS le site original. Sans affiliation avec pokebonk.com. Toutes les données (comptes/sauvegardes/classements) sont stockées indépendamment et ne sont pas partagées avec le site original", b: "Miroir non officiel · Pas le site original · Données non partagées" },
+          ja: { d: "リソースパックをダウンロード中", f: "ダウンロード完了 — ゲームを起動中…", s: "通信が遅いためバックグラウンドでダウンロードを続けます。今すぐ遊べます", h: "初回アクセス時にゲームの全リソース（モデル/図鑑/アイコン/オーディオ、約100MB）を一度だけダウンロードし、以後はローカルキャッシュから即起動します", m: "ミラーサイトのお知らせ：本サイトはファンによる非公式ミラーサイトであり、公式サイトではありません。pokebonk.comとは無関係です。すべてのデータ（アカウント/セーブ/ランキング）は独立して保存され、オリジナルサイトとは一切共有されません", b: "非公式ミラー · 公式ではない · データは非共有" },
+          ko: { d: "리소스 팩 다운로드 중", f: "다운로드 완료 — 게임 시작 중…", s: "네트워크가 느려 백그라운드에서 다운로드를 계속합니다. 지금 바로 플레이할 수 있습니다", h: "첫 방문 시 게임 리소스 전체(모델/도감/아이콘/오디오, 약 100MB)를 한 번만 다운로드하며, 이후 로컬 캐시로 즉시 실행됩니다", m: "미러 사이트 안내: 본 사이트는 팬이 만든 비공식 미러 사이트이며 원본 사이트가 아닙니다. pokebonk.com과 제휴되어 있지 않습니다. 모든 데이터(계정/저장/순위)는 독립적으로 저장되며 원본 사이트와 공유되지 않습니다", b: "비공식 미러 · 원본 아님 · 데이터 미공유" },
+          ru: { d: "Загрузка пакета ресурсов", f: "Загрузка завершена — вход в игру…", s: "Медленная сеть — загрузка продолжается в фоне, играть можно уже сейчас", h: "При первом посещении все игровые ресурсы (модели/декс/иконки/аудио, ~100 МБ) загружаются один раз и кэшируются локально", m: "Уведомление о зеркале: Это неофициальное фанатское зеркало сайта, а НЕ оригинальный сайт. Не связано с pokebonk.com. Все данные (аккаунты/сохранения/рейтинги) хранятся независимо и не передаются на оригинальный сайт", b: "Неофиц. зеркало · Не оригинал · Данные не общие" }
+        };
+        var TX = T.en;
+        try {
+          var lgs = navigator.languages || [navigator.language || "en"];
+          for (var li = 0; li < lgs.length; li++) {
+            var tg = (lgs[li] || "").toLowerCase();
+            if (tg.indexOf("zh") === 0) { TX = (tg.indexOf("tw") >= 0 || tg.indexOf("hk") >= 0 || tg.indexOf("hant") >= 0) ? T.zht : T.zh; break; }
+            for (var kk in T) { if (kk !== "zh" && kk !== "zht" && tg.indexOf(kk) === 0) { TX = T[kk]; li = lgs.length; break; } }
+            if (TX !== T.en) break;
+          }
+        } catch (e) {}
+        var WL = ["pokebonk-m5.rth1.xyz/", "pokebonk-m6.rth1.xyz/", "pokebonk-m7.rth1.xyz/"];
+        var MIME = { png: "image/png", ogg: "audio/ogg", glb: "model/gltf-binary", json: "application/json", jpg: "image/jpeg",
+                     jpeg: "image/jpeg", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav",
+                     ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", gz: "application/gzip" };
+        var G = { shown: false, released: false, finished: false,
+                  total: 0, ok: 0, bytes: 0,
+                  failed: [], passesLeft: 2, fails: 0, cooldownUntil: 0,
+                  pace: 500, okStreak: 0, lastProgress: Date.now(),
+                  C: null, H: null, M: null, X: null, L0: null,
+                  subq: null, subi: null, active: 0, bgTimer: 0 };
+        function ckGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+        /* ---------- UI ---------- */
+        var ov, fill, stEl, subEl, lastUI = 0;
+        function buildUI() {
+          var st1 = document.createElement("style");
+          st1.textContent = "@keyframes pbgate{to{transform:rotate(360deg)}}";
+          (document.head || document.documentElement).appendChild(st1);
+          ov = document.createElement("div");
+          ov.id = "pb-gate";
+          ov.style.cssText = "position:fixed;inset:0;z-index:2147483000;background:#1a1630;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;font:16px/1.6 system-ui,sans-serif;text-align:center;transition:opacity .45s";
+          var sp = document.createElement("div");
+          sp.style.cssText = "width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,.14);border-top-color:#e94756;animation:pbgate .9s linear infinite";
+          var logo = document.createElement("strong");
+          logo.textContent = "PokéBonk"; logo.style.cssText = "font-size:22px;letter-spacing:.5px";
+          stEl = document.createElement("div");
+          stEl.style.cssText = "font-size:17px;font-weight:600";
+          var barw = document.createElement("div");
+          barw.style.cssText = "width:min(320px,72vw);height:10px;border-radius:6px;background:rgba(255,255,255,.13);overflow:hidden";
+          fill = document.createElement("div");
+          fill.style.cssText = "width:0%;height:100%;border-radius:6px;background:#e94756;transition:width .25s";
+          barw.appendChild(fill);
+          subEl = document.createElement("div");
+          subEl.style.cssText = "font-size:13px;opacity:.78;font-variant-numeric:tabular-nums";
+          var hint = document.createElement("div");
+          hint.style.cssText = "font-size:12px;opacity:.5;max-width:82vw;line-height:1.5";
+          hint.textContent = TX.h;
+          var mir = document.createElement("div");
+          mir.style.cssText = "font-size:11.5px;opacity:.6;max-width:86vw;line-height:1.6;border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:8px 12px;background:rgba(255,255,255,.04)";
+          mir.textContent = TX.m || "";
+          ov.appendChild(sp); ov.appendChild(logo); ov.appendChild(stEl);
+          ov.appendChild(barw); ov.appendChild(subEl); ov.appendChild(hint);
+          ov.appendChild(mir);
+          (document.body || document.documentElement).appendChild(ov);
+          stEl.textContent = TX.d + "…";
+        }
+        function showUI() {
+          if (G.shown) return;
+          G.shown = true;
+          buildUI();
+          updateUI(true);
+        }
+        function updateUI(force) {
+          if (!G.shown || G.finished || !fill) return;
+          var now = Date.now();
+          if (!force && now - lastUI < 200) return;
+          lastUI = now;
+          var pct = G.total ? Math.min(99.5, (G.ok / G.total) * 100) : 0;
+          fill.style.width = pct + "%";
+          subEl.textContent = G.ok + " / " + G.total + " · " + Math.floor(pct) + "% · " + (G.bytes / 1048576).toFixed(1) + " MB";
+        }
+        function removeOv() {
+          if (ov && ov.parentNode) ov.parentNode.removeChild(ov);
+          ov = null;
+        }
+        function release(msg) {
+          if (G.released) return;
+          G.released = true;
+          if (G.shown && ov) {
+            if (msg) stEl.textContent = msg;
+            setTimeout(function () {
+              ov.style.opacity = "0";
+              setTimeout(removeOv, 520);
+            }, G.finished ? 900 : 500);
+          }
+        }
+        function finish() {
+          if (G.finished) return;
+          G.finished = true;
+          try { localStorage.setItem("pb.warm.done", "1"); localStorage.removeItem("pb.warm.i"); } catch (e) {}
+          if (G.shown && !G.released && fill) {
+            fill.style.width = "100%";
+            if (subEl) subEl.textContent = G.total + " / " + G.total + " · 100% · " + (G.bytes / 1048576).toFixed(1) + " MB";
+            release(TX.f);
+          }
+        }
+
+        /* ---------- 引擎: 按主机分区队列 ---------- */
+        function hostIdx(p) {
+          if (G.X && G.X[p] !== undefined) return G.X[p];
+          var parts = p.split("/");
+          var d = parts[0] === "assets" && parts.length > 2 ? parts.slice(0, 2).join("/") : parts[0];
+          var m = G.M ? G.M[d] : undefined;
+          return m === undefined ? 0 : m;
+        }
+        function partition(list) {
+          var qs = G.H.map(function () { return []; });
+          for (var i = 0; i < list.length; i++) {
+            var h = hostIdx(list[i]);
+            if (h >= qs.length) h = 0;
+            qs[h].push(list[i]);
+          }
+          return qs;
+        }
+        function one(p) {
+          var h = G.H[hostIdx(p)], tryList = h ? [h] : [];
+          for (var t = 0; t < G.H.length; t++) if (G.H[t] !== h) tryList.push(G.H[t]);
+          var k = 0;
+          function attempt() {
+            if (k >= tryList.length) return Promise.reject(new Error("allhosts"));
+            var url = "https://" + tryList[k++] + p + ".b64.txt";
+            return fetch(url, { mode: "cors", credentials: "omit", cache: "force-cache" }).then(function (r) {
+              if (r.status === 429 || r.status >= 500) { var er = new Error("http" + r.status); er.rate = true; throw er; }
+              if (!r.ok) throw new Error("http" + r.status);
+              return r.text();
+            }).then(function (txt) {
+              var bin = atob(txt.replace(/\s+/g, ""));
+              var bytes = new Uint8Array(bin.length);
+              for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+              var ext = p.slice(p.lastIndexOf(".") + 1).toLowerCase();
+              var resp = new Response(bytes.buffer, { headers: { "Content-Type": MIME[ext] || "application/octet-stream" } });
+              return G.C.put("/" + p, resp).then(function () { return bytes.length; });
+            }).catch(function (e) {
+              if (k >= tryList.length) throw e;
+              return attempt();
+            });
+          }
+          return attempt();
+        }
+        function prog(n) {
+          G.ok++; if (n) G.bytes += n;
+          G.lastProgress = Date.now();
+          updateUI(false);
+        }
+        function drain(h) {
+          G.active++;
+          function step() {
+            var now = Date.now();
+            if (now < G.cooldownUntil) { setTimeout(step, G.cooldownUntil - now + 50); return; }
+            var q = G.subq[h];
+            if (!q || G.subi[h] >= q.length) { G.active--; passEnd(); return; }
+            var p = q[G.subi[h]++];
+            G.C.match("/" + p, { ignoreVary: true }).then(function (hit) {
+              if (hit) { prog(0); return 0; }
+              return one(p).then(function (n) {
+                G.okStreak++;
+                if (G.okStreak >= 30) { G.pace = Math.max(500, G.pace - 80); G.okStreak = 0; }
+                prog(n || 0);
+                return 1;
+              }).catch(function (e) {
+                G.failed.push(p); G.fails++;
+                G.okStreak = 0;
+                if (e && e.rate) G.pace = Math.min(2500, G.pace * 2);
+                if (G.fails >= 8) { G.cooldownUntil = Date.now() + 45000; G.fails = 0; }
+                return 1;
+              });
+            }).catch(function () { G.failed.push(p); }).then(function (net) {
+              setTimeout(step, net ? G.pace : 0);
+            });
+          }
+          step();
+        }
+        function startPass(list) {
+          G.subq = partition(list);
+          G.subi = G.subq.map(function () { return 0; });
+          for (var h = 0; h < G.subq.length; h++) {
+            drain(h);
+            if (G.subq[h].length > 80) drain(h);
+          }
+        }
+        function passEnd() {
+          if (G.active > 0) return;
+          if (G.failed.length && G.passesLeft > 0) {
+            G.passesLeft--;
+            var f = G.failed; G.failed = [];
+            startPass(f);
+            return;
+          }
+          if (G.failed.length === 0) { finish(); return; }
+          if (!G.released) release(TX.s);
+          backgroundRetry();
+        }
+        function backgroundRetry() {
+          if (G.bgTimer) return;
+          G.bgTimer = setInterval(function () {
+            if (G.active > 0) return;
+            if (!G.failed.length) { clearInterval(G.bgTimer); G.bgTimer = 0; finish(); return; }
+            var f = G.failed; G.failed = [];
+            startPass(f);
+          }, 60000);
+        }
+
+        /* ---------- 启动 ---------- */
+        function fetchWL(i) {
+          if (i >= WL.length) { if (G.shown) release(TX.s); return; }
+          fetch("https://" + WL[i] + "pb-warmlist.json", { cache: "force-cache" }).then(function (r) {
+            if (!r.ok) throw new Error("http" + r.status);
+            return r.json();
+          }).then(function (D) {
+            G.H = D.h; G.M = D.m; G.X = D.x; G.L0 = D.l;
+            return caches.open("pb-media-v9").then(function (c) { G.C = c; });
+          }).then(function () { begin(); })
+            .catch(function () { fetchWL(i + 1); });
+        }
+        var warmDone = false;
+        try { warmDone = ckGet("pb.warm.done") === "1"; } catch (e) {}
+        if (!warmDone) showUI();
+        function begin() {
+          G.total = G.L0.length;
+          try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+          if (!warmDone) { startPass(G.L0); }
+          else {
+            var sample = [];
+            for (var i = 0; i < 40 && i < G.L0.length; i++) sample.push(G.L0[i]);
+            for (var j = 0; j < 40; j++) sample.push(G.L0[Math.floor((j + 0.5) * G.L0.length / 40) % G.L0.length]);
+            var misses = 0, doneN = 0;
+            sample.forEach(function (p) {
+              G.C.match("/" + p, { ignoreVary: true }).then(function (hit) {
+                doneN++; if (!hit) misses++;
+                if (doneN === sample.length) { if (misses > 3) showUI(); startPass(G.L0); }
+              }).catch(function () { doneN++; if (doneN === sample.length) startPass(G.L0); });
+            });
+          }
+          setInterval(function () {
+            if (G.shown && !G.released && Date.now() - G.lastProgress > 240000) release(TX.s);
+          }, 30000);
+        }
+        window.__PBGateInfo = function () {
+          return { shown: G.shown, released: G.released, finished: G.finished,
+                   ok: G.ok, total: G.total, bytes: G.bytes, failed: G.failed.length,
+                   pace: G.pace, workers: G.active };
+        };
+        window.__PBSkipGate = function () {
+          if (!G.shown) showUI();
+          if (!G.released) {
+            G.released = true;
+            if (ov) { ov.style.opacity = "0"; setTimeout(removeOv, 250); }
+          }
+        };
+        window.__PBGateFinishTest = function () { G.ok = G.total; updateUI(true); finish(); };
+        fetchWL(0);
+      })();
+</script>
+  </head>
+  <body>
+    <noscript><main style="max-width:640px;margin:40px auto;padding:0 16px;color:#fff;font:16px/1.5 system-ui,sans-serif"><h1>PokéBonk</h1><p>Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial.</p><p>【镜像站声明】本站为非官方粉丝镜像站，并非原站，与原站 pokebonk.com 无任何隶属或授权关系；本站全部数据（账号/存档/排行榜）独立存储，与原站完全不互通。Unofficial fan-made mirror site — not the original website; data is not shared with pokebonk.com.</p><p>PokéBonk necesita JavaScript y WebGL para funcionar. Actívalos y recarga la página.</p><p><a href="/?lang=es" hreflang="es">ES</a> · <a href="/?lang=en" hreflang="en">EN</a> · <a href="/?lang=pt" hreflang="pt">PT</a> · <a href="/?lang=fr" hreflang="fr">FR</a> · <a href="/?lang=ja" hreflang="ja">JA</a> · <a href="/?lang=zh" hreflang="zh-CN">ZH</a> · <a href="/?lang=zht" hreflang="zh-TW">ZHT</a> · <a href="/?lang=ko" hreflang="ko">KO</a> · <a href="/?lang=ru" hreflang="ru">RU</a></p><p><a href="https://discord.gg/X7KusQqx8X">Discord</a> · <a href="/legal">Legal</a></p></main></noscript>
+    <canvas id="game"></canvas>
+    <div id="ui"></div>
+    <script>
+      // PokéBonk 镜像: 常驻镜像站角标 (pointer-events:none, 不拦截任何游戏点击)
+      (function () {
+        var B = { zh: "镜像站 · 非原站 · 数据与原站不互通", zht: "鏡像站 · 非原站 · 資料與原站不互通",
+                  en: "Unofficial mirror · Not the original site · Data not shared",
+                  es: "Réplica no oficial · No es el sitio original · Datos no compartidos",
+                  pt: "Espelho não oficial · Não é o site original · Dados não compartilhados",
+                  fr: "Miroir non officiel · Pas le site original · Données non partagées",
+                  ja: "非公式ミラー · 公式ではない · データは非共有",
+                  ko: "비공식 미러 · 원본 아님 · 데이터 미공유",
+                  ru: "Неофиц. зеркало · Не оригинал · Данные не общие" };
+        var t = B.en;
+        try {
+          var lgs = navigator.languages || [navigator.language || "en"];
+          for (var i = 0; i < lgs.length; i++) {
+            var g = (lgs[i] || "").toLowerCase();
+            if (g.indexOf("zh") === 0) { t = (g.indexOf("tw") >= 0 || g.indexOf("hk") >= 0 || g.indexOf("hant") >= 0) ? B.zht : B.zh; break; }
+            for (var k in B) { if (k !== "zh" && k !== "zht" && g.indexOf(k) === 0) { t = B[k]; i = lgs.length; break; } }
+            if (t !== B.en) break;
+          }
+        } catch (e) {}
+        function go() {
+          try {
+            var el = document.createElement("div");
+            el.id = "pb-mirror-badge";
+            el.textContent = t;
+            el.style.cssText = "position:fixed;left:8px;bottom:8px;z-index:2147482900;pointer-events:none;background:rgba(10,8,20,.42);color:rgba(255,255,255,.66);font:11px/1.35 system-ui,sans-serif;padding:3px 9px;border-radius:9px;letter-spacing:.2px";
+            (document.body || document.documentElement).appendChild(el);
+          } catch (e) {}
+        }
+        if (document.body) go(); else addEventListener("DOMContentLoaded", go);
+      })();
+    </script>
+  </body>
+</html>
