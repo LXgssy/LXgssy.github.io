@@ -78,7 +78,7 @@ function publicSession(u, token) {
   return s;
 }
 
-var STATUS_TPL = { "maintenance": { "on": false, "title": "Server upgrade", "message": "We are moving PokéBonk to a bigger, faster server so everyone can play smoothly at peak time. Your runs in progress are kept. Back as soon as possible!", "eta": 1793201580000 }, "bypass": false, "season": { "n": 1, "name": "", "start": 1793030660243, "end": 1798214660243, "live": true, "dust": 1, "message": "", "next": null }, "events": [], "serverTime": 0 };
+var STATUS_TPL = {"maintenance": {"on": false, "title": "Server upgrade", "message": "We are moving PokéBonk to a bigger, faster server so everyone can play smoothly at peak time. Your runs in progress are kept. Back as soon as possible!", "eta": 1793201580000}, "bypass": false, "season": {"n": 1, "name": "", "start": 1793030660243, "end": 1798214660243, "live": true, "dust": 1, "message": "", "next": null}, "events": [{"id": "halloween26", "name": "La Noche de la Torre Lavanda", "desc": "Halloween en Kanto: sube la Torre Pokémon de Pueblo Lavanda piso a piso, supera sus oleadas de fantasmas y consigue premios exclusivos.", "color": "#9a6aff", "mode": "tower", "biome": "graveyard", "start": 1792600200000, "end": 1793813400000, "live": true, "claimable": true, "state": "auto", "points": {"name": "Velas", "icon": "vela"}, "art": {"tile": "ui/events/tower-card.jpg", "header": "ui/events/tower.jpg", "banner": "ui/events/tower-banner.jpg", "icon": "torre"}}], "registration": {"inviteOnly": false}};
 
 /* ---------------- API 仿真 ---------------- */
 async function handleAPI(route, method, body, authHdr, qparams) {
@@ -162,22 +162,21 @@ async function handleAPI(route, method, body, authHdr, qparams) {
     var user = await authUser();
     if (route === '/profile') {
       if (!user) return J({ "error": "No session." }, 401);
-      if (method === 'GET') return J(user.profile);
+      if (method === 'GET') return J({ "now": nowMs(), "profile": user.profile });
       if (method === 'POST') {
-        /* 合并保存 */
         var p = body || {};
         if (p && typeof p === 'object') {
           for (var k in p) { try { user.profile[k] = p[k]; } catch (e) {} }
           await saveProfile(user);
         }
-        return J(user.profile);
+        return J({ "now": nowMs(), "profile": user.profile });
       }
     }
     if (route === '/profile/starter' && method === 'POST') {
       if (!user) return J({ "error": "No session." }, 401);
       user.profile.starter = (body && body.id) || (body && body.starter) || 0;
       await saveProfile(user);
-      return J({ "ok": true, "starter": user.profile.starter });
+      return J({ "profile": user.profile });
     }
     if (route === '/profile/prefs' || route === '/profile/actions') {
       if (!user) return J({ "error": "No session." }, 401);
@@ -185,7 +184,7 @@ async function handleAPI(route, method, body, authHdr, qparams) {
         for (var k2 in body) { try { user.profile[k2] = body[k2]; } catch (e) {} }
         await saveProfile(user);
       }
-      return J({ "ok": true });
+      return J({ "profile": user.profile });
     }
     if (route === '/account/rename' && method === 'POST') {
       if (!user) return J({ "error": "No session." }, 401);
