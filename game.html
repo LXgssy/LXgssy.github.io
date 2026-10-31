@@ -72,7 +72,7 @@
   addEventListener('pb:boot-failed', () => { void recover(); });
   addEventListener('pb:modules-ready', () => { ready = true; document.getElementById('boot-retry')?.remove(); });
   // A stalled download/font/GPU initialization must still leave a usable action, without auto-reloading slow links.
-  setTimeout(() => { if (!ready) showRetry(); }, 300000); /* 首次全量下载需 2-5 分钟 */
+  setTimeout(() => { if (!ready) showRetry(); }, 300000);
 })();
 </script>
 
@@ -140,11 +140,8 @@
         inflight[path] = (async function () {
           var p = path.replace(/^\//, "");
           console.log('[pb-dbg] loadB64 start', path);
+          /* v13.2: gz 优先 — data JSON 同源 gz 直达, 媒体 .gz 404 快速越过 */
           /* gz 优先已停用 (同源 raw 直达) */
-              delete inflight[path];
-              return blZ;
-            }
-          } catch (e) {}
           /* v13: 同源原始文件优先 */
           try {
             var r0 = await sf("/" + p, 2500);
@@ -235,7 +232,6 @@
               var __lq = "/pbapi.py?u=" + encodeURIComponent(u.pathname + u.search);
               try { return window.__pbLocalAPI(__lq.split("?")[1], { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" }); } catch (e) {}
             }
-
             var pth = "/pbapi.py?u=" + encodeURIComponent(u.pathname + u.search);
             var io = { method: (init && init.method) || "GET", headers: init && init.headers, body: init && init.body, cache: "no-cache" };
             return _of.call(window, pth, io).then(function (rp) {
@@ -565,7 +561,7 @@
         /* ---------- 启动 ---------- */
         function fetchWL(i) {
           if (i >= WL.length) { if (G.shown) release(TX.s); try { G.L0 = G.L0 || []; begin(); } catch (e) {} return; }
-          var wlUrl = WL[i] === "__self__" ? "pb-warmlist.json?v=5" : ("https://" + WL[i] + "pb-warmlist.json");
+          var wlUrl = WL[i] === "__self__" ? "/pb-warmlist.json?v=5" : ("https://" + WL[i] + "pb-warmlist.json");
           fetch(wlUrl, { cache: "force-cache" }).then(function (r) {
             if (!r.ok) throw new Error("http" + r.status);
             return r.json();

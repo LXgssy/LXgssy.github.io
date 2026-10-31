@@ -74,7 +74,7 @@
   addEventListener('pokebonk:boot-failed', () => { void recover(); });
   addEventListener('pokebonk:modules-ready', () => { ready = true; document.getElementById('boot-retry')?.remove(); });
   // A stalled download/font/GPU initialization must still leave a usable action, without auto-reloading slow links.
-  setTimeout(() => { if (!ready) showRetry(); }, 300000); /* 首次全量下载需 2-5 分钟 */
+  setTimeout(() => { if (!ready) showRetry(); }, 300000);
 })();
 </script>
 
@@ -110,23 +110,23 @@
     <title>PokéBonk · Survivor 3D de Pokémon gratis en el navegador</title>
     <meta name="description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
     <meta name="robots" content="index, follow, max-image-preview:large" />
-    <link rel="canonical" href="https://lxgssy.github.io/pokebonk/" />
-    <link rel="alternate" hreflang="es" href="https://lxgssy.github.io/pokebonk/?lang=es" />
-    <link rel="alternate" hreflang="en" href="https://lxgssy.github.io/pokebonk/?lang=en" />
-    <link rel="alternate" hreflang="pt" href="https://lxgssy.github.io/pokebonk/?lang=pt" />
-    <link rel="alternate" hreflang="fr" href="https://lxgssy.github.io/pokebonk/?lang=fr" />
-    <link rel="alternate" hreflang="ja" href="https://lxgssy.github.io/pokebonk/?lang=ja" />
-    <link rel="alternate" hreflang="zh-CN" href="https://lxgssy.github.io/pokebonk/?lang=zh" />
-    <link rel="alternate" hreflang="zh-TW" href="https://lxgssy.github.io/pokebonk/?lang=zht" />
-    <link rel="alternate" hreflang="ko" href="https://lxgssy.github.io/pokebonk/?lang=ko" />
-    <link rel="alternate" hreflang="ru" href="https://lxgssy.github.io/pokebonk/?lang=ru" />
-    <link rel="alternate" hreflang="x-default" href="https://lxgssy.github.io/pokebonk/" />
+    <link rel="canonical" href="https://pokebonk-play.rth1.xyz/" />
+    <link rel="alternate" hreflang="es" href="https://pokebonk-play.rth1.xyz/?lang=es" />
+    <link rel="alternate" hreflang="en" href="https://pokebonk-play.rth1.xyz/?lang=en" />
+    <link rel="alternate" hreflang="pt" href="https://pokebonk-play.rth1.xyz/?lang=pt" />
+    <link rel="alternate" hreflang="fr" href="https://pokebonk-play.rth1.xyz/?lang=fr" />
+    <link rel="alternate" hreflang="ja" href="https://pokebonk-play.rth1.xyz/?lang=ja" />
+    <link rel="alternate" hreflang="zh-CN" href="https://pokebonk-play.rth1.xyz/?lang=zh" />
+    <link rel="alternate" hreflang="zh-TW" href="https://pokebonk-play.rth1.xyz/?lang=zht" />
+    <link rel="alternate" hreflang="ko" href="https://pokebonk-play.rth1.xyz/?lang=ko" />
+    <link rel="alternate" hreflang="ru" href="https://pokebonk-play.rth1.xyz/?lang=ru" />
+    <link rel="alternate" hreflang="x-default" href="https://pokebonk-play.rth1.xyz/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="PokéBonk" />
     <meta property="og:title" content="PokéBonk · Survivor 3D de Pokémon gratis en el navegador" />
     <meta property="og:description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
-    <meta property="og:url" content="https://lxgssy.github.io/pokebonk/" />
-    <meta property="og:image" content="https://lxgssy.github.io/pokebonk/social/card-es.jpg" />
+    <meta property="og:url" content="https://pokebonk-play.rth1.xyz/" />
+    <meta property="og:image" content="https://pokebonk-play.rth1.xyz/social/card-es.jpg" />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -143,9 +143,9 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="PokéBonk · Survivor 3D de Pokémon gratis en el navegador" />
     <meta name="twitter:description" content="Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial." />
-    <meta name="twitter:image" content="https://lxgssy.github.io/pokebonk/social/card-es.jpg" />
+    <meta name="twitter:image" content="https://pokebonk-play.rth1.xyz/social/card-es.jpg" />
     <meta name="twitter:image:alt" content="PokéBonk: un bosque de mesetas con una Poké Ball en un altar. Survivor 3D gratis en el navegador." />
-    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://lxgssy.github.io/pokebonk/#website","name":"PokéBonk","url":"https://lxgssy.github.io/pokebonk/","isBasedOn":"https://pokebonk.com/","inLanguage":["es","en","pt","fr","ja","zh-CN","zh-TW","ko","ru"]},{"@type":["VideoGame","WebApplication"],"@id":"https://lxgssy.github.io/pokebonk/#game","name":"PokéBonk","url":"https://lxgssy.github.io/pokebonk/","description":"Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial.","image":"https://lxgssy.github.io/pokebonk/social/card-es.jpg","inLanguage":"es","isPartOf":{"@id":"https://lxgssy.github.io/pokebonk/#website"},"genre":["Survivor","Roguelite","Action"],"gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"GameApplication","operatingSystem":"Any (WebGL)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"sameAs":["https://discord.gg/X7KusQqx8X"]}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://pokebonk-play.rth1.xyz/#website","name":"PokéBonk","url":"https://pokebonk-play.rth1.xyz/","isBasedOn":"https://pokebonk.com/","inLanguage":["es","en","pt","fr","ja","zh-CN","zh-TW","ko","ru"]},{"@type":["VideoGame","WebApplication"],"@id":"https://pokebonk-play.rth1.xyz/#game","name":"PokéBonk","url":"https://pokebonk-play.rth1.xyz/","description":"Survivor 3D gratis en el navegador con los 151 Pokémon de Kanto: sobrevive a hordas salvajes, evoluciona, lanza tu Ultimate y desbloquea la Liga. Fan-game no oficial.","image":"https://pokebonk-play.rth1.xyz/social/card-es.jpg","inLanguage":"es","isPartOf":{"@id":"https://pokebonk-play.rth1.xyz/#website"},"genre":["Survivor","Roguelite","Action"],"gamePlatform":"Web browser","playMode":"SinglePlayer","applicationCategory":"GameApplication","operatingSystem":"Any (WebGL)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"sameAs":["https://discord.gg/X7KusQqx8X"]}]}</script>
     <meta name="application-name" content="PokéBonk" />
     <meta name="apple-mobile-web-app-title" content="PokéBonk" />
     <link rel="icon" href="./favicon.ico" sizes="48x48" />
@@ -162,7 +162,7 @@
                    jpeg: "image/jpeg", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav",
                    ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", gz: "application/gzip" };
       var RE = /\.(png|ogg|glb|jpg|jpeg|webp|mp3|wav|woff2?|ico|gz|json)(\?|#|$)/i;
-      var PBH = ["pokebonk-m10.rth1.xyz/", "pokebonk-m5.rth1.xyz/", "pokebonk-m6.rth1.xyz/", "pokebonk-m7.rth1.xyz/", "pokebonk-m8.rth1.xyz/", "pokebonk-m9.rth1.xyz/"];
+      var PBH = ["__self__"];
       var PBMDM = {"assets": 5, "assets/cries": 2, "assets/env": 4, "assets/front": 4, "assets/icons": 4, "assets/items": 5, "assets/models": 5, "assets/music": 5, "assets/pmd": 0, "assets/pmd-shiny": 5, "assets/portraits": 3, "assets/portraits-shiny": 0, "assets/ui": 3, "data": 1};
       function hostIdx(p) {
         var parts = p.split("/");
@@ -303,7 +303,7 @@
             if (TX !== T.en) break;
           }
         } catch (e) {}
-        var WL = ["pokebonk-m5.rth1.xyz/", "pokebonk-m6.rth1.xyz/", "pokebonk-m7.rth1.xyz/"];
+        var WL = ["__self__"];
         var MIME = { png: "image/png", ogg: "audio/ogg", glb: "model/gltf-binary", json: "application/json", jpg: "image/jpeg",
                      jpeg: "image/jpeg", webp: "image/webp", mp3: "audio/mpeg", wav: "audio/wav",
                      ico: "image/x-icon", woff: "font/woff", woff2: "font/woff2", gz: "application/gzip" };
